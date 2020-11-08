@@ -1,0 +1,73 @@
+header.head {
+    padding-top: 10.5rem;
+    padding-bottom: 6rem;
+    text-align: center;
+    color: #fff;
+    background-image: url(../img/header.jf);
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-position: center center;
+    background-size: cover;
+    background-color: #ffffff;
+}
+
+div.head-heading {
+	margin-bottom: 5px;
+	font-size: 50px;
+    color: #800020;
+} 
+
+div.head-subheading {
+	font-size: 30px;
+    color: #800020;
+} 
+
+.footer {
+    text-align: center;
+    font-size: 0.9rem;
+    padding: 1.5rem !important;
+}
+
+.page-section {
+    padding: 6rem 0;
+}
+.text-uppercase {
+    text-transform: uppercase !important;
+}
+
+.page-section h3.section-subheading {
+    font-size: 1rem;
+    font-weight: 400;
+    font-style: italic;
+    margin-bottom: 4rem;
+}
+
+.page-section h2.section-heading {
+    font-size: 2.5rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.team-member {
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.aboutUs-image {
+    position: relative;
+    text-align: center;
+    color: white;
+
+}
+
+.aboutUs {
+	padding: 10px;
+}
+
+.customColor {
+    background-color: #800020;
+}
+
+.aboutUs-heading {
+    text-align: center;
+}
