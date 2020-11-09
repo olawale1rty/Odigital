@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Todo</title>
+	<style type="text/css">
+		html {
+		  box-sizing: border-box;
+		}
+
+		*, *::before, *::after {
+		  box-sizing: inherit;
+		  margin: 0;
+		  padding: 0;
+		}
+
+		body {
+		 font-family:
+		 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans,
+		  Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+		 line-height: 1.4;
+		}
+		.container {
+			width: 100%;
+			max-width: 500px;
+			margin: 0 auto;
+			padding-left: 10px;
+			padding-right: 10px;
+			color: white;
+			height: 90vh;
+			margin-top: 5vh;
+			margin-bottom: 5vh;
+			overflow-y: auto;
+			background-color: black;
+		}
+
+		.title {
+		  text-align: center;
+		  margin-bottom: 20px;
+		  font-size: 80px;
+		  opacity: 0.5;
+		}
+		#list {
+			margin-top: 20px;
+			text-align: center;
+			margin-bottom: 20px;
+			list-style: none;
+		}
+
+		#btn {
+			margin: auto;
+			padding: 10px;
+			opacity: 0.5;
+			cursor: pointer;
+		}
+
+		.todo-item {
+		  margin-bottom: 10px;
+		  width: 100%;
+		  display: flex;
+		  align-items: center;
+		  justify-content: space-between;
+		}
+
+		.todo-item span {
+		  flex-grow: 1;
+		  margin-left: 10px;
+		  margin-right: 10px;
+		  font-size: 22px;
+		}
+
+		.done span {
+		  text-decoration: line-through;
+		}
+
+		input[type="checkbox"] {
+		  display: none;
+		}
+
+		.tick {
+		  width: 30px;
+		  height: 30px;
+		  border: 3px solid #333;
+		  border-radius: 50%;
+		  display: inline-flex;
+		  justify-content: center;
+		  align-items: center;
+		  cursor: pointer;
+		}
+
+		.tick::before {
+		  content: '✓';
+		  font-size: 20px;
+		  display: none;
+		}
+
+		.done .tick::before {
+		  display: inline;
+		}
+
+		.delete-todo {
+		  border: 3px solid red;
+		  border-radius: 5px;
+		  background-color: white;
+		  outline: none;
+		  cursor: pointer;
+		  width: 30px;
+		  height: 30px;
+		}
+
+		#head {
+		  width: 100%;
+		  display: flex;
+		  justify-content: space-between;
+		}
+
+		input[type="text"] {
+		  width: 80%;
+		  padding: 10px;
+		  border-radius: 4px;
+		  border: 3px solid #333;
+		}
+
+		.empty-state {
+		  margin-top: 20px;
+		  flex-direction: column;
+		  align-items: center;
+		  justify-content: center;
+		  display: none;
+		}
+
+		.empty-state__title, .empty-state__description {
+		  margin-bottom: : 20px;
+		}
+
+		#list:empty {
+		  display: none;
+		}
+
+		#list:empty + .empty-state {
+		  display: flex;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1 class="title">TODO APP</h1>
+		<div id="head">
+			<input type="text" name="name" id="name" placeholder="enter your todo item" autofocus="">
+			<button id="btn" onclick="func()">OK</button>
+		</div>
+		<ol id="list"></ol>
+		
+	    <div class="empty-state">
+	      <h2 class="empty-state__title">Add your first todo</h2>
+	      <p class="empty-state__description">What do you want to get done today?</p>
+	    </div>
+	    
+	</div>
+	<script type="text/javascript">
+		let input = document.getElementById("name");
+		input.addEventListener("keyup", function(event) {
+		  if (event.keyCode === 13) {
+		    event.preventDefault();
+		    document.getElementById("btn").click();
+			}
+		});
+
+		function func() {
+			let name = document.getElementById('name').value.trim()			
+			if (name === ""){
+				alert('Enter a todo item')
+			}else {
+				addTodo(name)
+				document.getElementById('name').value = "";
+				document.getElementById('name').focus();	
+			}	
+		};
+		
+		let todoItems = [];
+		function addTodo(name){
+			const todo = {
+			    text: name,
+			    checked: false,
+			    id: Date.now(),
+			};
+			todoItems.push(todo);
+			renderTodo(todo);
+		};
+
+		function renderTodo(todo) {
+			localStorage.setItem('todoItemsRef', JSON.stringify(todoItems));
+			const list = document.querySelector('#list');
+			const item = document.querySelector(`[data-key='${todo.id}']`);
+			if (todo.deleted) {
+			    item.remove();
+			    if (todoItems.length === 0) list.innerHTML = '';
+			    return
+			}
+
+			const isChecked = todo.checked ? 'done': '';
+			const listItem = document.createElement("li");
+			listItem.setAttribute('class', `todo-item ${isChecked}`);
+			listItem.setAttribute('data-key', todo.id);
+			listItem.innerHTML = `
+			    <input id="${todo.id}" type="checkbox"/>
+			    <label for="${todo.id}" class="tick js-tick"></label>
+			    <span>${todo.text}</span>
+			    <button class="delete-todo js-delete-todo">
+			    X
+			    </button>
+			`;
+			if (item) {
+			    list.replaceChild(listItem, item);
+			} else {
+				list.append(listItem);
+			}
+		}
+
+		function toggleDone(key) {
+		  const index = todoItems.findIndex(item => item.id === Number(key));
+		  todoItems[index].checked = !todoItems[index].checked;
+		  renderTodo(todoItems[index]);
+		}
+
+		function deleteTodo(key) {
+		  const index = todoItems.findIndex(item => item.id === Number(key));
+		  const todo = {
+		    deleted: true,
+		    ...todoItems[index]
+		  };
+		  todoItems = todoItems.filter(item => item.id !== Number(key));
+		  renderTodo(todo);
+		}
+
+		const listDone = document.querySelector('#list');
+		listDone.addEventListener('click', event => {
+		  if (event.target.classList.contains('js-tick')) {
+		    const itemKey = event.target.parentElement.dataset.key;
+		    toggleDone(itemKey);
+		  }
+
+		  if (event.target.classList.contains('js-delete-todo')) {
+		    const itemKey = event.target.parentElement.dataset.key;
+		    deleteTodo(itemKey);
+		  }
+		});
+
+		document.addEventListener('DOMContentLoaded', () => {
+		  const ref = localStorage.getItem('todoItemsRef');
+		  if (ref) {
+		    todoItems = JSON.parse(ref);
+		    todoItems.forEach(t => {
+		      renderTodo(t);
+		    });
+		  }
+		});
+	</script>
+</body>
+</html>
